@@ -117,9 +117,7 @@ delete_ui_objects(service.id, version.number)
 upload_vcl(version, vcl)
 diff_vcl(service, version)
 
-# FIXME: Requires unreleased code:
-# https://github.com/fastly/fastly-ruby/commit/c4fbdbf094359201cfd7be3366cbbb000f882070
-#modify_settings(version, config['default_ttl'])
+modify_settings(version, config['default_ttl'])
 
 validate_config(version)
 version.activate!
