@@ -1,0 +1,28 @@
+---
+# Example configuration file
+#
+# Usage:
+#   configuration:
+#     environment:
+#       key: a1b2c3d4e5
+#
+# configuration, environment and key are all configurable.
+# For instance, configuration will be the name of the service.
+# Environment would be the specific service to apply to.
+# Keys are passed to the API.
+
+api:
+  production:
+    service_id: b9aj2as9f8j2ads2u
+  staging:
+    service_id: e88819794e9uasfsk
+  preview:
+    service_id: 97skasfiasy2j9dsm
+
+frontend:
+  production:
+    service_id: 2817hasu29jasgu29
+  staging:
+    service_id: asj298asgy2j9asdf
+  preview:
+    service_id: 9uask39agyhskasoj

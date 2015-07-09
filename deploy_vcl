@@ -1,0 +1,125 @@
+#!/usr/bin/env ruby
+
+require 'diffy'
+require 'erb'
+require 'fastly'
+require 'yaml'
+
+CONFIGS = YAML.load_file(File.join(__dir__, "fastly.yaml"))
+
+def get_config(args)
+  raise "Usage: #{$0} <configuration> <environment>" unless args.size == 2
+
+  configuration = args[0]
+  environment = args[1]
+  config_hash = CONFIGS[configuration][environment] rescue nil
+
+  raise "ERROR: Unknown configuration/environment combination. Check this combination exists in fastly.yaml." unless config_hash
+
+  return configuration, environment, config_hash
+end
+
+def get_git_version
+  ref = %x{git describe --always}.chomp
+  ref = "unknown" if ref.empty?
+
+  ref
+end
+
+def get_dev_version(configuration)
+  # Sometimes the latest version isn't the development version.
+  version = configuration.version
+  version = version.clone if version.active == "1"
+
+  version
+end
+
+def delete_ui_objects(service_id, version_number)
+  # Delete objects created by the UI. We want VCL to be the source of truth.
+  # Most of these don't have real objects in the Fastly API gem.
+  to_delete = %w{backend healthcheck condition cache_settings request_settings response_object header gzip}
+  to_delete.each do |type|
+    type_path = "/service/#{service_id}/version/#{version_number}/#{type}"
+    @f.client.get(type_path).map{ |i| i["name"] }.each do |name|
+      puts "Deleting #{type}: #{name}"
+      resp = @f.client.delete("#{type_path}/#{ERB::Util.url_encode(name)}")
+      raise 'ERROR: Failed to delete configuration' unless resp
+    end
+  end
+end
+
+def modify_settings(version, ttl)
+  settings = version.settings
+  settings.settings.update({
+    "general.default_host" => "",
+    "general.default_ttl"  => ttl,
+  })
+  settings.save!
+end
+
+def render_vcl(configuration, environment, config)
+  vcl_file = File.join(File.dirname(__FILE__), 'vcl_templates', "#{configuration}.vcl.erb")
+  vcl_contents = ERB.new(File.read(vcl_file)).result()
+
+  return vcl_contents
+end
+
+def upload_vcl(version, contents)
+  vcl_name = 'main'
+
+  begin
+    version.vcl(vcl_name) && version.delete_vcl(vcl_name)
+  rescue Fastly::Error
+  end
+
+  vcl = version.upload_vcl(vcl_name, contents)
+  @f.client.put(Fastly::VCL.put_path(vcl) + '/main')
+end
+
+def diff_vcl(configuration, version_new)
+  version_current = configuration.versions.find { |v| v.active == '1' }
+  diff = Diffy::Diff.new(
+    version_current.generated_vcl.content,
+    version_new.generated_vcl.content,
+    :context => 3
+  )
+
+  puts "Diff versions: #{version_current.number} -> #{version_new.number}"
+  puts diff.to_s(:color)
+end
+
+def validate_config(version)
+  # version.validate doesn't return the right thing.
+  valid_hash = @f.client.get(Fastly::Version.put_path(version) + '/validate')
+  unless valid_hash.fetch('status') == "ok"
+    raise "ERROR: Invalid configuration:\n" + valid_hash.fetch('msg')
+  end
+end
+
+configuration, environment, config = get_config(ARGV)
+username = ENV['FASTLY_USER']
+password = ENV['FASTLY_PASS']
+
+if username.nil? or password.nil?
+  puts "Fastly credentials are not set. Exiting."
+  exit 1
+end
+
+@f = Fastly.new({ :user => username, :password => password })
+config['git_version'] = get_git_version
+
+configuration = @f.get_service(config['service_id'])
+version = get_dev_version(configuration)
+puts "Using version: #{version.number}"
+
+vcl = render_vcl(configuration, environment, config)
+delete_ui_objects(service.id, version.number)
+upload_vcl(version, vcl)
+diff_vcl(service, version)
+
+# FIXME: Requires unreleased code:
+# https://github.com/fastly/fastly-ruby/commit/c4fbdbf094359201cfd7be3366cbbb000f882070
+#modify_settings(version, config['default_ttl'])
+
+validate_config(version)
+version.activate!
