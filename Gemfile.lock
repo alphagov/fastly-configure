@@ -1,0 +1,28 @@
+GEM
+  remote: https://rubygems.org/
+  specs:
+    colorize (0.5.8)
+    curb (0.8.8)
+    curb-fu (0.6.2)
+      curb (>= 0.5.4.0)
+      rack-test (>= 0.2.0)
+    diffy (3.0.1)
+    fastly (1.00)
+      curb (>= 0.7.15)
+      curb-fu (>= 0.6.1)
+      json
+      rdoc (>= 3.11)
+    json (1.8.3)
+    rack (1.6.4)
+    rack-test (0.6.3)
+      rack (>= 1.0)
+    rdoc (4.2.0)
+      json (~> 1.4)
+
+PLATFORMS
+  ruby
+
+DEPENDENCIES
+  colorize (= 0.5.8)
+  diffy (= 3.0.1)
+  fastly (= 1.00)
