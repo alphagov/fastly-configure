@@ -108,8 +108,8 @@ end
 @f = Fastly.new({ :user => username, :password => password })
 config['git_version'] = get_git_version
 
-configuration = @f.get_service(config['service_id'])
-version = get_dev_version(configuration)
+service = @f.get_service(config['service_id'])
+version = get_dev_version(service)
 puts "Using version: #{version.number}"
 
 vcl = render_vcl(configuration, environment, config)
