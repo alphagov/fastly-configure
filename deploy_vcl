@@ -57,7 +57,7 @@ def modify_settings(version, ttl)
   settings.save!
 end
 
-def render_vcl(configuration, environment, config)
+def render_vcl(configuration, environment, config, version)
   vcl_file = File.join(File.dirname(__FILE__), 'vcl_templates', "#{configuration}.vcl.erb")
   vcl_contents = ERB.new(File.read(vcl_file)).result()
 
@@ -112,7 +112,7 @@ service = @f.get_service(config['service_id'])
 version = get_dev_version(service)
 puts "Using version: #{version.number}"
 
-vcl = render_vcl(configuration, environment, config)
+vcl = render_vcl(configuration, environment, config, version)
 delete_ui_objects(service.id, version.number)
 upload_vcl(version, vcl)
 diff_vcl(service, version)
