@@ -59,7 +59,7 @@ end
 
 def render_vcl(configuration, environment, config, version)
   vcl_file = File.join(File.dirname(__FILE__), 'vcl_templates', "#{configuration}.vcl.erb")
-  vcl_contents = ERB.new(File.read(vcl_file)).result()
+  vcl_contents = ERB.new(File.read(vcl_file), nil, '-').result()
 
   return vcl_contents
 end
