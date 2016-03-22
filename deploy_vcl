@@ -59,7 +59,7 @@ end
 
 def render_vcl(configuration, environment, config, version)
   vcl_file = File.join(File.dirname(__FILE__), 'vcl_templates', "#{configuration}.vcl.erb")
-  vcl_contents = ERB.new(File.read(vcl_file)).result()
+  vcl_contents = ERB.new(File.read(vcl_file), nil, '-').result()
 
   return vcl_contents
 end
@@ -117,9 +117,7 @@ delete_ui_objects(service.id, version.number)
 upload_vcl(version, vcl)
 diff_vcl(service, version)
 
-# FIXME: Requires unreleased code:
-# https://github.com/fastly/fastly-ruby/commit/c4fbdbf094359201cfd7be3366cbbb000f882070
-#modify_settings(version, config['default_ttl'])
+modify_settings(version, config['default_ttl'])
 
 validate_config(version)
 version.activate!
