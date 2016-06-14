@@ -7,7 +7,7 @@ YAML files, using Fastly's [API](https://docs.fastly.com/api/).
 
 To run Fastly Configure, you'll need:
 
-  - Ruby 2.0.0 or later
+  - Ruby 2.1.8 or later
   - Bundler 1.5.3 or later
   - a Fastly account
 
