@@ -110,7 +110,9 @@ config['git_version'] = get_git_version
 
 service = @f.get_service(config['service_id'])
 version = get_dev_version(service)
-puts "Using version: #{version.number}"
+puts "Current version: #{version.number}"
+puts "Configuration: #{configuration}"
+puts "Environment: #{environment}"
 
 vcl = render_vcl(configuration, environment, config, version)
 delete_ui_objects(service.id, version.number)
