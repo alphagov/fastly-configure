@@ -29,7 +29,7 @@ end
 def get_dev_version(configuration)
   # Sometimes the latest version isn't the development version.
   version = configuration.version
-  version = version.clone if version.active == "1"
+  version = version.clone if version.active?
 
   version
 end
@@ -77,7 +77,7 @@ def upload_vcl(version, contents)
 end
 
 def diff_vcl(configuration, version_new)
-  version_current = configuration.versions.find { |v| v.active == '1' }
+  version_current = configuration.versions.find { |v| v.active? }
   diff = Diffy::Diff.new(
     version_current.generated_vcl.content,
     version_new.generated_vcl.content,
