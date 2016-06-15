@@ -78,6 +78,11 @@ end
 
 def diff_vcl(configuration, version_new)
   version_current = configuration.versions.find { |v| v.active? }
+
+  if version_current.nil?
+    raise 'There are no active versions of this configuration'
+  end
+
   diff = Diffy::Diff.new(
     version_current.generated_vcl.content,
     version_new.generated_vcl.content,
