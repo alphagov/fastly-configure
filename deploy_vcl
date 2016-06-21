@@ -78,6 +78,11 @@ end
 
 def diff_vcl(configuration, version_new)
   version_current = configuration.versions.find { |v| v.active? }
+
+  if version_current.nil?
+    raise 'There are no active versions of this configuration'
+  end
+
   diff = Diffy::Diff.new(
     version_current.generated_vcl.content,
     version_new.generated_vcl.content,
@@ -97,13 +102,15 @@ def validate_config(version)
 end
 
 configuration, environment, config = get_config(ARGV)
+
+['FASTLY_USER', 'FASTLY_PASS'].each do |envvar|
+  if ENV[envvar].nil?
+    raise "#{envvar} is not set in the environment"
+  end
+end
+
 username = ENV['FASTLY_USER']
 password = ENV['FASTLY_PASS']
-
-if username.nil? or password.nil?
-  puts "Fastly credentials are not set. Exiting."
-  exit 1
-end
 
 @f = Fastly.new({ :user => username, :password => password })
 config['git_version'] = get_git_version
