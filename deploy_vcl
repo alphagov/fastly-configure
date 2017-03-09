@@ -5,6 +5,8 @@ require 'erb'
 require 'fastly'
 require 'yaml'
 
+require_relative './lib/render_template'
+
 CONFIGS = YAML.load_file(File.join(__dir__, "fastly.yaml"))
 
 def get_config(args)
@@ -55,13 +57,6 @@ def modify_settings(version, ttl)
     "general.default_ttl"  => ttl,
   })
   settings.save!
-end
-
-def render_vcl(configuration, environment, config, version)
-  vcl_file = File.join(File.dirname(__FILE__), 'vcl_templates', "#{configuration}.vcl.erb")
-  vcl_contents = ERB.new(File.read(vcl_file), nil, '-').result()
-
-  return vcl_contents
 end
 
 def upload_vcl(version, contents)
@@ -121,7 +116,7 @@ puts "Current version: #{version.number}"
 puts "Configuration: #{configuration}"
 puts "Environment: #{environment}"
 
-vcl = render_vcl(configuration, environment, config, version)
+vcl = RenderTemplate.render_template(configuration, environment, config, version)
 delete_ui_objects(service.id, version.number)
 upload_vcl(version, vcl)
 diff_vcl(service, version)
