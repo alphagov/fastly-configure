@@ -2,7 +2,7 @@
 
 set -e
 
-git clone 'git@github.gds:gds/cdn-configs.git'
+git clone 'git@github.digital.cabinet-office.gov.uk:gds/cdn-configs.git'
 
 cp cdn-configs/fastly/fastly.yaml .
 
