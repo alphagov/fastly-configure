@@ -1,0 +1,4 @@
+---
+- name: SearchMatchLength
+  b_percentage: 30
+  expiry: 1d
