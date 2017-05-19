@@ -7,6 +7,9 @@ git clone 'git@github.digital.cabinet-office.gov.uk:gds/cdn-configs.git'
 cp cdn-configs/fastly/fastly.yaml .
 
 git clone 'git@github.com:alphagov/govuk-cdn-config.git'
+cd govuk-cdn-config
+git checkout change-vcl-templating
+cd ..
 
 cp govuk-cdn-config/vcl_templates/*.vcl.erb vcl_templates/
 
