@@ -1,7 +1,3 @@
 ---
-- name: BenchmarkInlineLink
-  b_percentage: 30
-  expiry: 14d
-- name: SearchMatchLength
-  b_percentage: 5
-  expiry: 1d
+- BenchmarkInlineLink
+- SearchMatchLength
