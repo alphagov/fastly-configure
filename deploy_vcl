@@ -1,8 +1,13 @@
 #!/usr/bin/env ruby
 
+require 'cgi'
 require 'diffy'
 require 'erb'
 require 'fastly'
+require 'json'
+require 'net/http'
+require 'net/https'
+require 'time'
 require 'yaml'
 
 require_relative './lib/render_template'
@@ -98,7 +103,7 @@ end
 
 configuration, environment, config = get_config(ARGV)
 
-['FASTLY_USER', 'FASTLY_PASS'].each do |envvar|
+['FASTLY_USER', 'FASTLY_PASS', 'FASTLY_OTP'].each do |envvar|
   if ENV[envvar].nil?
     raise "#{envvar} is not set in the environment"
   end
@@ -106,8 +111,21 @@ end
 
 username = ENV['FASTLY_USER']
 password = ENV['FASTLY_PASS']
+passcode = ENV['FASTLY_OTP']
 
-@f = Fastly.new({ :user => username, :password => password })
+http = Net::HTTP.new('api.fastly.com', 443)
+http.use_ssl = true
+
+token_expires = CGI.escape((Time.now + (60 * 20)).iso8601)
+
+data = "username=#{username}&password=#{password}&expires_at=#{token_expires}"
+headers = {'Fastly-OTP' => passcode}
+
+resp = http.post('/tokens', data, headers)
+
+token = JSON.load(resp.body)['access_token']
+
+@f = Fastly.new({ :api_key => token })
 config['git_version'] = get_git_version
 
 service = @f.get_service(config['service_id'])
