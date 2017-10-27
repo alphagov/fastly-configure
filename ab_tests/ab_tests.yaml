@@ -1,2 +1,8 @@
 ---
-- TaskListSidebar
+- TaskListSidebar:
+  - A
+  - B
+- MultivariateTest:
+  - firstVariant
+  - secondVariant
+  - thirdVariant
