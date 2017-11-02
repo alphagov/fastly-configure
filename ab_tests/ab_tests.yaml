@@ -4,6 +4,12 @@
 - Example:
   - A
   - B
+- TaskListBrowse:
+  - A
+  - B
+- TaskListHeader:
+  - A
+  - B
 - TaskListSidebar:
   - A
   - B
