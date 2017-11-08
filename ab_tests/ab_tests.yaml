@@ -1,6 +1,9 @@
 # List the variants for your AB or multivariate test here.
 # Please leave the 'Example' test config in place.
 ---
+- ContentNavigation:
+  - Original
+  - UniversalNoNav
 - Example:
   - A
   - B
