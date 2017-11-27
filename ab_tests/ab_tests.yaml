@@ -13,6 +13,12 @@
 - TaskListSidebar:
   - A
   - B
+- CivilPartnershipTasklistSidebar:
+  - A
+  - B
+- CivilPartnershipTaskListHeader:
+  - A
+  - B
 - TrafficSignsSummary:
   - A
   - B
