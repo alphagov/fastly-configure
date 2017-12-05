@@ -22,6 +22,12 @@
 - CivilPartnershipTaskListHeader:
   - A
   - B
+- GetADivorceTasklistSidebar:
+  - A
+  - B
+- GetADivorceTaskListHeader:
+  - A
+  - B
 - TrafficSignsSummary:
   - A
   - B
