@@ -16,13 +16,13 @@
 - TaskListSidebar:
   - A
   - B
-- CivilPartnershipTasklistSidebar:
+- CivilPartnershipTaskListSidebar:
   - A
   - B
 - CivilPartnershipTaskListHeader:
   - A
   - B
-- GetADivorceTasklistSidebar:
+- GetADivorceTaskListSidebar:
   - A
   - B
 - GetADivorceTaskListHeader:
