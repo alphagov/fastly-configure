@@ -98,16 +98,22 @@ end
 
 configuration, environment, config = get_config(ARGV)
 
-['FASTLY_USER', 'FASTLY_PASS'].each do |envvar|
-  if ENV[envvar].nil?
-    raise "#{envvar} is not set in the environment"
+if ENV['FASTLY_API_KEY'].nil?
+  ['FASTLY_USER', 'FASTLY_PASS'].each do |envvar|
+    if ENV[envvar].nil?
+      raise "#{envvar} is not set in the environment"
+    end
+    username = ENV['FASTLY_USER']
+    password = ENV['FASTLY_PASS']
+    login_opts = { :user => username, :password => password }
   end
+else
+  puts "FASTLY_API_KEY defined, overriding FASTLY_USER/FASTLY_PASS"
+  apiKey = ENV['FASTLY_API_KEY']
+  login_opts = {api_key: apiKey}
 end
 
-username = ENV['FASTLY_USER']
-password = ENV['FASTLY_PASS']
-
-@f = Fastly.new({ :user => username, :password => password })
+@f = Fastly.new(login_opts)
 config['git_version'] = get_git_version
 
 service = @f.get_service(config['service_id'])
