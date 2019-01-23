@@ -50,10 +50,10 @@ def delete_ui_objects(service_id, version_number)
   end
 end
 
-def modify_settings(version, ttl)
+def modify_settings(version, ttl, default_host)
   settings = version.settings
   settings.settings.update({
-    "general.default_host" => "",
+    "general.default_host" => default_host,
     "general.default_ttl"  => ttl,
   })
   settings.save!
@@ -121,7 +121,7 @@ delete_ui_objects(service.id, version.number)
 upload_vcl(version, vcl)
 diff_vcl(service, version)
 
-modify_settings(version, config['default_ttl'])
+modify_settings(version, config['default_ttl'], config['default_host'])
 
 validate_config(version)
 version.activate!
